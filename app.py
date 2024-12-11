@@ -1,6 +1,5 @@
 # 스트림릿
 import streamlit as st
-from streamlit_pills import pills
 
 # 기타 라이브러리
 import requests
@@ -54,18 +53,47 @@ total_df["date_dt"] = pd.to_datetime(total_df["date_dt"], format='%Y-%m-%d %p %I
 
 # 날짜별로 행의 개수 세기
 date_counts = total_df.groupby(total_df['date_dt'].dt.date).size()
+date_counts = date_counts.rename("")
 
 # 날짜별 행의 개수를 데이터프레임으로 변환
-date_counts_df = date_counts.reset_index(name='counts')
-date_counts_df.columns = ['date', 'counts']
+date_counts_df = date_counts.rename({0:})
+
 #st.divider()
+###########################################################
 
 # 날짜별 행의 개수 시각화
 st.caption("※ Beta버전 언급량 시각화는 7일까지만 제공")
-st.area_chart(date_counts, color='#FF4B4B', height=130)
+st.area_chart(date_counts_df, color='#FF4B4B', height=130)
 
 # 또는 바 차트를 사용하고 싶다면 아래 코드를 사용
 # st.bar_chart(date_counts)
+
+# Custom CSS for pill styling
+pill_css = """
+<style>
+.pill {
+    display: inline-block;
+    padding: 0.3em 0.9em;
+    margin-top: 0em;    /* 위쪽 마진 */
+    margin-right: 0.2em;    /* 오른쪽 마진 */
+    margin-bottom: 0em; /* 아래쪽 마진 */
+    margin-left: 0.2em;     /* 왼쪽 마진 */
+    border-radius: 9999px;
+    background-color: #FF4B4B;
+    color: white;
+    font-size: 0.8em;
+    font-weight: 700;
+}
+</style>
+"""
+
+# Inject the custom CSS
+st.markdown(pill_css, unsafe_allow_html=True)
+
+# Function to create a pill
+def create_pill(label):
+    return f'<span class="pill">{label}</span>'
+
 # 취합 기사
 for x in range(len(total_df)):
     with st.container(height=255, border=True):
@@ -84,6 +112,8 @@ for x in range(len(total_df)):
         st.markdown(f"##### <a href='{url}'>{title}</a>", unsafe_allow_html=True)
         st.caption(journalist+" | "+date)
         st.markdown(f"<a href='{url}'>{summary}</a>", unsafe_allow_html=True)
-        pills(f"Label{x}", keywords, label_visibility="collapsed")
+        pills = [create_pill(label) for label in keywords]
+        st.markdown(' '.join(pills), unsafe_allow_html=True)
+       
 
 
