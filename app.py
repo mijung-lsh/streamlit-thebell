@@ -53,17 +53,13 @@ total_df["date_dt"] = pd.to_datetime(total_df["date_dt"], format='%Y-%m-%d %p %I
 
 # 날짜별로 행의 개수 세기
 date_counts = total_df.groupby(total_df['date_dt'].dt.date).size()
-date_counts = date_counts.rename("")
-
-# 날짜별 행의 개수를 데이터프레임으로 변환
-date_counts_df = date_counts.rename({0:})
 
 #st.divider()
 ###########################################################
 
 # 날짜별 행의 개수 시각화
 st.caption("※ Beta버전 언급량 시각화는 7일까지만 제공")
-st.area_chart(date_counts_df, color='#FF4B4B', height=130)
+st.area_chart(date_counts, color='#FF4B4B', height=130)
 
 # 또는 바 차트를 사용하고 싶다면 아래 코드를 사용
 # st.bar_chart(date_counts)
